@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class PlayerIdleState : PlayerGroundState
 {
     public PlayerIdleState(Player player, PlayerStateMachine stateMachine, string animBoolName)
@@ -9,6 +11,8 @@ public class PlayerIdleState : PlayerGroundState
     public override void Enter()
     {
         base.Enter();
+
+        _player.ZeroVelocity();
     }
 
     public override void Exit()
@@ -20,7 +24,10 @@ public class PlayerIdleState : PlayerGroundState
     {
         base.Update();
 
-        if(_xInput != 0)
+        if(_xInput == _player.FacingDir && _player.IsWallDetected())
+            return;
+
+        if(_xInput != 0 && !_player.IsBusy)
         {
             _stateMachine.ChangeState(_player.MoveState);
         }

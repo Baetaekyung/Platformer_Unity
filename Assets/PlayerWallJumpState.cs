@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAirState : PlayerState
+public class PlayerWallJumpState : PlayerState
 {
-    public PlayerAirState(Player player, PlayerStateMachine stateMachine, string animBoolName)
+    public PlayerWallJumpState(Player player, PlayerStateMachine stateMachine, string animBoolName)
         : base(player, stateMachine, animBoolName)
     {
     }
@@ -12,6 +12,9 @@ public class PlayerAirState : PlayerState
     public override void Enter()
     {
         base.Enter();
+
+        _stateTimer = 0.4f;
+        _player.SetVelocity(5 * -_player.FacingDir, _player.jumpForce);
     }
 
     public override void Exit()
@@ -23,13 +26,10 @@ public class PlayerAirState : PlayerState
     {
         base.Update();
 
-        if(_player.IsWallDetected())
-            _stateMachine.ChangeState(_player.WallSlideState);
+        if (_stateTimer < 0)
+            _stateMachine.ChangeState(_player.AirState);
 
         if (_player.IsGroundDetected())
             _stateMachine.ChangeState(_player.IdleState);
-
-        if (_xInput != 0)
-            _player.SetVelocity(_player.moveSpeed * 0.8f * _xInput, _rb.velocity.y);
     }
 }
